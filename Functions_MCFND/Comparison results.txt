@@ -1,0 +1,146 @@
+Problem 1：
+Problem settings:
+julia GetTestProblem.jl --method scp_slim --sample 7 --days 10 --nodes 1 --commodities 3 --time 7200 --use_z0 --use_avg_scenario --use_si_vi --use_partial_cuts --use_vi_1 --use_vi_2
+
+Julia results by Bertsimas：
+[DataNetworkDesign Exit]
+                objval_scp = 36666.55890488507, objtrue_scp = 37210.66842625228, gap_scp = 0.0, gaptrue_scp = 0.014622406540360466,
+                confidence_adjusted_bound_gap = -0.05077227892543697, nCuts = 14, γ = 1.01, jobid = 00000, objtrue_iters = 1
+
+Stochastic bd results：
+------ Final Results ------
+Total Time (SCP): 13.31 s
+Objval (SCP relaxed): 34567.09902868928
+Objtrue (original):   37008.51373373283
+Gap: 0.0, True Gap: 0.06596900168996056
+Confidence-Adjusted Bound Gap: -0.03864041493097178
+True Outer Loop Iters: 1
+
+Selected z (edges):
+[1. 1. 0. 1. 0. 1. 0. 1. 0. 1. 1. 1. 0. 1. 1. 1. 1. 1. 0. 1. 0. 0. 1. 1.
+ 1. 0. 0. 1. 1. 1. 0. 1. 1. 1. 1. 1. 0. 1. 1. 0. 1. 0. 1. 0. 0. 1. 1. 0.
+ 1. 0. 1. 0. 1. 0. 1. 1. 1. 0. 0. 1. 0. 0. 1. 1. 1. 0. 0. 1. 1. 0. 1. 0.
+ 1. 1. 1. 1. 1. 1. 1. 0. 1. 1. 1. 0. 0. 1. 0. 1.]
+
+Traditional single-cut parallel-computed bd results：
+too slow, cannot converge in 12 hours
+
+Traditional multi-cut parallel-computed bd results：
+too slow, cannot converge in 12 hours
+
+Problem 2:
+Problem settings:
+julia GetTestProblem.jl --method scp_slim --sample 2 --days 3 --nodes 0.5 --commodities 3 --time 7200 --use_z0 --use_avg_scenario --use_si_vi --use_partial_cuts --use_vi_1 --use_vi_2
+
+Julia results by Bertsimas：
+[DataNetworkDesign Exit]
+                objval_scp = 5581.530820400559, objtrue_scp = 5581.530828567405, gap_scp = 0.0, gaptrue_scp = 1.4631910356112186e-9,
+                confidence_adjusted_bound_gap = -0.14329457606375684, nCuts = 52, γ = 1.01, jobid = 00000, objtrue_iters = 8
+
+Stochastic bd results：
+------ Final Results ------
+Total Time (SCP): 3.51 s
+Objval (SCP relaxed): 5581.530808687595
+Objtrue (original):   5581.5308285729425
+Gap: 0.0, True Gap: 3.5627049807483536e-09
+Confidence-Adjusted Bound Gap: -0.14329457391751668
+True Outer Loop Iters: 1
+
+Selected z (edges):
+[1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+
+Traditional single-cut parallel-computed bd results：
+========== Benders Decomposition 结束 ==========
+最优目标值: 5581.5308
+最终z: [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+总耗时: 2.87 秒
+iteration: 2
+gap: 1.1092466248136625e-11
+
+Traditional multi-cut parallel-computed bd results：
+========== Benders Decomposition 结束 ==========
+最优目标值: 5581.5308
+最终z (0/1): [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]
+总耗时: 2.19 秒
+iteration: 2
+gap: 2.938915316440817e-11
+
+
+Problem 3:
+Problem settings:
+julia GetTestProblem.jl --method scp_slim --sample 3 --days 5 --nodes 0.8 --commodities 3 --time 7200 --use_z0 --use_avg_scenario --use_si_vi --use_partial_cuts --use_vi_1 --use_vi_2
+
+Julia results by Bertsimas：
+[DataNetworkDesign Exit]
+                objval_scp = 13961.62509442787, objtrue_scp = 13961.625100287656, gap_scp = 0.0007241318712831837, gaptrue_scp = 0.0007241322906857915,
+                confidence_adjusted_bound_gap = -0.0026927627373366605, nCuts = 44, γ = 1.01, jobid = 00000, objtrue_iters = 3
+
+Stochastic bd results：
+------ Final Results ------
+Total Time (SCP): 14.56 s
+Objval (SCP relaxed): 13914.833611130478
+Objtrue (original):   13978.904307331934
+Gap: 0.0, True Gap: 0.004583384705470121
+Confidence-Adjusted Bound Gap: -0.08016028305926828
+True Outer Loop Iters: 2
+
+Selected z (edges):
+[1. 1. 1. 1. 1. 1. 0. 1. 1. 1. 1. 1. 1. 1. 0. 1. 0. 1. 1. 0. 0. 0. 1. 1.
+ 1. 1. 0. 0. 1. 1. 1. 1. 1. 1. 0. 1. 1. 1. 1. 1. 0. 0. 1. 1. 1. 0. 1. 1.
+ 1. 0. 1. 1. 1. 0. 1. 1.]
+
+Traditional single-cut parallel-computed bd results：
+========== Benders Decomposition 结束 ==========
+最优目标值: 13961.6251
+最终z: [ 1.  1.  0.  1.  1.  1. -0.  1.  1.  1.  1.  1.  1.  1.  0.  1. -0.  1.
+  1. -0. -0.  0.  1.  1.  1.  1. -0. -0.  1.  1.  1.  1.  1.  1. -0.  1.
+  1.  1.  1.  1. -0. -0.  1.  1.  1. -0.  1.  1.  1.  0.  1.  1.  0. -0.
+  1.  1.]
+总耗时: 1792.07 秒
+iteration: 849
+gap: 0.0
+
+Traditional multi-cut parallel-computed bd results：
+========== Benders Decomposition 结束 ==========
+最优目标值: 13961.6251
+最终z (0/1): [1 1 0 1 1 1 0 1 1 1 1 1 1 1 0 1 0 1 1 0 0 0 1 1 1 1 0 0 1 1 1 1 1 1 0 1 1
+ 1 1 1 0 0 1 1 1 0 1 1 1 0 1 1 0 0 1 1]
+总耗时: 416.01 秒
+iteration: 176
+gap: 7.096216182379865e-06
+
+Problem 4:
+Problem settings:
+julia GetTestProblem.jl --method scp_slim --sample 3 --days 5 --nodes 0.7 --commodities 2 --time 7200 --use_z0 --use_avg_scenario --use_si_vi --use_partial_cuts --use_vi_1 --use_vi_2
+
+Julia results by Bertsimas：
+[DataNetworkDesign Exit]
+                objval_scp = 7944.026514366999, objtrue_scp = 8454.94055586964, gap_scp = 0.0, gaptrue_scp = 0.06042786914071804,
+                confidence_adjusted_bound_gap = -0.009756951203204661, nCuts = 5, γ = 1.01, jobid = 00000, objtrue_iters = 0
+
+Stochastic bd results：
+------ Final Results ------
+Total Time (SCP): 3.38 s
+Objval (SCP relaxed): 7959.318083824775
+Objtrue (original):   8454.940555964673
+Gap: 0.0, True Gap: 0.05861927341289854
+Confidence-Adjusted Bound Gap: -0.1562546388487477
+True Outer Loop Iters: 1
+
+Traditional single-cut parallel-computed bd results：
+========== Benders Decomposition 结束 ==========
+最优目标值: 8454.9406
+最终z: [0. 1. 0. 1. 0. 0. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
+ 1. 1. 0. 0. 1. 1. 1. 1. 1. 1. 1. 0. 1. 1. 1. 1. 1. 0.]
+总耗时: 45.39 秒
+iteration: 35
+gap: 0.0
+
+Traditional multi-cut parallel-computed bd results：
+========== Benders Decomposition 结束 ==========
+最优目标值: 8454.9406
+最终z (0/1): [0 1 0 1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 0 1
+ 1 1 1 1 0]
+总耗时: 32.15 秒
+iteration: 22
+gap: 0.0
