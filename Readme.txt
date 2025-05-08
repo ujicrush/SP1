@@ -1,11 +1,15 @@
-以下对此repository进行简要说明:
+Here is a brief description of this repository:
 
-在Functions_MCFND folder中包含了以Bertsimas的文章为基准的Multi-commodity Capacitated Fixed-charge Network Design（MCFND）问题下的三种Benders decomposition algorithms的代码。三种algorithm分别是：bertsimas提出的stochastic benders decomposition(也就是本次semester project试图与电网融合的)，传统的并行运算的single-cut benders decomposition，传统的并行运算的multi-cut benders decomposition。
+The **Functions\_MCFND** folder contains the code for three Benders decomposition algorithms for the **Multi-commodity Capacitated Fixed-charge Network Design (MCFND)** problem, based on the approach proposed in Bertsimas' paper. The three algorithms included are:
 
-对这三种算法在四种算例下进行了多维度的比较，包括他们的运算时间，运算iteration数量，目标值等。对比的结果在Comparison results.txt文件中。
+1. **Stochastic Benders Decomposition** - the main focus of this semester project, which aims to integrate this method with power grid optimization.
+2. **Traditional Parallel Single-Cut Benders Decomposition** - a conventional approach that uses single-cut method and parallel computation.
+3. **Traditional Parallel Multi-Cut Benders Decomposition** - another conventional approach that uses multi-cut method and parallel computation.
 
-四种算例在Benchmark folder中，在传统的两种算法的py文件运行时，需要复制对应的benchmark在开头问题设置部分进去替换。
+A multi-dimensional comparison of these three algorithms has been conducted across four benchmark instances, evaluating metrics such as computational time, number of iterations, and objective values. The comparison results can be found in the **Comparison results.txt** file.
 
-两种传统的并行运算benders decomposition代码在Traditional Benders Decomposition文件夹中，我们主要研究的新型算法在Stochastic Benders Decomposition文件夹中。
+The four benchmark instances are located in the **Benchmark** folder. For the two traditional parallel Benders decomposition algorithms, you need to copy the corresponding benchmark setup into the problem definition section at the beginning before running the code.
+
+The code for the two traditional parallel Benders decomposition methods is located in the **Traditional Benders Decomposition** folder, while the main focus of this project, the new stochastic algorithm, can be found in the **Stochastic Benders Decomposition** folder.
 
 [1]	D. Bertsimas, R. Cory-Wright, J. Pauphilet, and P. Petridis, ‘A Stochastic Benders Decomposition Scheme for Large-Scale Stochastic Network Design’, Inf. J. Comput., p. ijoc.2023.0074, Nov. 2024, doi: 10.1287/ijoc.2023.0074.
