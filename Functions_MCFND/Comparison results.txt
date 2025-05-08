@@ -9,7 +9,7 @@ Julia results by Bertsimas：
 
 Stochastic bd results：
 ------ Final Results ------
-Total Time (SCP): 13.31 s
+Total Time (SCP): 14.64 s
 Objval (SCP relaxed): 34567.09902868928
 Objtrue (original):   37008.51373373283
 Gap: 0.0, True Gap: 0.06596900168996056
@@ -28,6 +28,7 @@ too slow, cannot converge in 12 hours
 Traditional multi-cut parallel-computed bd results：
 too slow, cannot converge in 12 hours
 
+
 Problem 2:
 Problem settings:
 julia GetTestProblem.jl --method scp_slim --sample 2 --days 3 --nodes 0.5 --commodities 3 --time 7200 --use_z0 --use_avg_scenario --use_si_vi --use_partial_cuts --use_vi_1 --use_vi_2
@@ -39,7 +40,7 @@ Julia results by Bertsimas：
 
 Stochastic bd results：
 ------ Final Results ------
-Total Time (SCP): 3.51 s
+Total Time (SCP): 2.17 s
 Objval (SCP relaxed): 5581.530808687595
 Objtrue (original):   5581.5308285729425
 Gap: 0.0, True Gap: 3.5627049807483536e-09
@@ -50,20 +51,20 @@ Selected z (edges):
 [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
 
 Traditional single-cut parallel-computed bd results：
-========== Benders Decomposition 结束 ==========
-最优目标值: 5581.5308
-最终z: [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
-总耗时: 2.87 秒
-iteration: 2
-gap: 1.1092466248136625e-11
+========== Benders Decomposition Completed ==========
+Optimal Objective Value: 5581.5308
+Final z: [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+Total Time: 2.19 seconds
+Iterations: 2
+Gap: 1.1092466248136625e-11
 
 Traditional multi-cut parallel-computed bd results：
-========== Benders Decomposition 结束 ==========
-最优目标值: 5581.5308
-最终z (0/1): [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]
-总耗时: 2.19 秒
-iteration: 2
-gap: 2.938915316440817e-11
+========== Benders Decomposition Completed ==========
+Optimal Objective Value: 5581.5308
+Final z (0/1): [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]
+Total Time: 2.25 seconds
+Iterations: 2
+Gap: 2.938915316440817e-11
 
 
 Problem 3:
@@ -77,7 +78,7 @@ Julia results by Bertsimas：
 
 Stochastic bd results：
 ------ Final Results ------
-Total Time (SCP): 14.56 s
+Total Time (SCP): 13.14 s
 Objval (SCP relaxed): 13914.833611130478
 Objtrue (original):   13978.904307331934
 Gap: 0.0, True Gap: 0.004583384705470121
@@ -90,24 +91,25 @@ Selected z (edges):
  1. 0. 1. 1. 1. 0. 1. 1.]
 
 Traditional single-cut parallel-computed bd results：
-========== Benders Decomposition 结束 ==========
-最优目标值: 13961.6251
-最终z: [ 1.  1.  0.  1.  1.  1. -0.  1.  1.  1.  1.  1.  1.  1.  0.  1. -0.  1.
+========== Benders Decomposition Completed ==========
+Optimal Objective Value: 13961.6251
+Final z: [ 1.  1.  0.  1.  1.  1. -0.  1.  1.  1.  1.  1.  1.  1.  0.  1. -0.  1.
   1. -0. -0.  0.  1.  1.  1.  1. -0. -0.  1.  1.  1.  1.  1.  1. -0.  1.
   1.  1.  1.  1. -0. -0.  1.  1.  1. -0.  1.  1.  1.  0.  1.  1.  0. -0.
   1.  1.]
-总耗时: 1792.07 秒
-iteration: 849
-gap: 0.0
+Total Time: 1761.70 seconds
+Iterations: 849
+Gap: 0.0
 
 Traditional multi-cut parallel-computed bd results：
-========== Benders Decomposition 结束 ==========
-最优目标值: 13961.6251
-最终z (0/1): [1 1 0 1 1 1 0 1 1 1 1 1 1 1 0 1 0 1 1 0 0 0 1 1 1 1 0 0 1 1 1 1 1 1 0 1 1
+========== Benders Decomposition Completed ==========
+Optimal Objective Value: 13961.6251
+Final z (0/1): [1 1 0 1 1 1 0 1 1 1 1 1 1 1 0 1 0 1 1 0 0 0 1 1 1 1 0 0 1 1 1 1 1 1 0 1 1
  1 1 1 0 0 1 1 1 0 1 1 1 0 1 1 0 0 1 1]
-总耗时: 416.01 秒
-iteration: 176
-gap: 7.096216182379865e-06
+Total Time: 337.11 seconds
+Iterations: 176
+Gap: 7.096216182379865e-06
+
 
 Problem 4:
 Problem settings:
@@ -120,27 +122,31 @@ Julia results by Bertsimas：
 
 Stochastic bd results：
 ------ Final Results ------
-Total Time (SCP): 3.38 s
+Total Time (SCP): 1.51 s
 Objval (SCP relaxed): 7959.318083824775
 Objtrue (original):   8454.940555964673
 Gap: 0.0, True Gap: 0.05861927341289854
 Confidence-Adjusted Bound Gap: -0.1562546388487477
 True Outer Loop Iters: 1
 
-Traditional single-cut parallel-computed bd results：
-========== Benders Decomposition 结束 ==========
-最优目标值: 8454.9406
-最终z: [0. 1. 0. 1. 0. 0. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
+Selected z (edges):
+[0. 1. 0. 1. 0. 0. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
  1. 1. 0. 0. 1. 1. 1. 1. 1. 1. 1. 0. 1. 1. 1. 1. 1. 0.]
-总耗时: 45.39 秒
-iteration: 35
-gap: 0.0
+
+Traditional single-cut parallel-computed bd results：
+========== Benders Decomposition Completed ==========
+Optimal Objective Value: 8454.9406
+Final z: [0. 1. 0. 1. 0. 0. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
+ 1. 1. 0. 0. 1. 1. 1. 1. 1. 1. 1. 0. 1. 1. 1. 1. 1. 0.]
+Total Time: 48.27 seconds
+Iterations: 35
+Gap: 0.0
 
 Traditional multi-cut parallel-computed bd results：
-========== Benders Decomposition 结束 ==========
-最优目标值: 8454.9406
-最终z (0/1): [0 1 0 1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 0 1
+========== Benders Decomposition Completed ==========
+Optimal Objective Value: 8454.9406
+Final z (0/1): [0 1 0 1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 0 1
  1 1 1 1 0]
-总耗时: 32.15 秒
-iteration: 22
-gap: 0.0
+Total Time: 29.37 seconds
+Iterations: 22
+Gap: 0.0
