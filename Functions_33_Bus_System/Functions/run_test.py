@@ -9,6 +9,7 @@ from multiprocessing import Pool, Manager
 import datetime as dt
 import gurobipy as gp
 from gurobipy import GRB
+from scipy.stats import norm
 
 # Function used to perform parallel progamming
 def compute_SOC_ACOPF(sc, NT, baseMVA, N_bus, N_line, Yp, sending_node, receiving_node,
@@ -302,93 +303,131 @@ if __name__=="__main__":
     lowerB_save = np.zeros(lim_iter)
     fairness_price = np.zeros(lim_iter)
     invest_save = np.zeros(lim_iter)
-    Elapsed_time = np.zeros(lim_iter)
 
-    iter = 0
-    convergence = 0
+    max_outer_iters = 20
+    iter_outer = 0
+    converged_fully = False
     R_div = 4
+    np.random.seed(42)
+    iter = 0
+    while (iter_outer < max_outer_iters) and not converged_fully:
+        convergence = 0
 
-    while ((iter < lim_iter) & (convergence==0)):
-        # master problem solving...
-        obj_MP, invest_save[iter], ESS_loc[:,iter], Max_rating, Max_capacity, alpha_store[iter] = Allocation_2D(
-            iter, NP, N_bus, ESS_candidate, R_bounds, C_bounds, 
-            obj_2nd, lambda_2nd, mu_2nd, 
-            previous_rating, previous_cap, 
-            Fixed_cost, Power_rating_cost, Energy_capacity_cost
-        )
+        while ((iter < lim_iter) & (convergence==0)):
+            # master problem solving...
+            obj_MP, invest_save[iter], ESS_loc[:,iter], Max_rating, Max_capacity, alpha_store[iter] = Allocation_2D(
+                iter, NP, N_bus, ESS_candidate, R_bounds, C_bounds, 
+                obj_2nd, lambda_2nd, mu_2nd, 
+                previous_rating, previous_cap, 
+                Fixed_cost, Power_rating_cost, Energy_capacity_cost
+            )
 
-        ################################################################## Battery Alocation 
-        IndESS = np.where(ESS_loc[:,iter]==1)[0]
+            ################################################################## Battery Alocation 
+            IndESS = np.where(ESS_loc[:,iter]==1)[0]
 
-        # Charging limits
-        ESS_cha_l = np.zeros((N_bus, NT))  # Lower charging limits
-        ESS_cha_u = np.zeros((N_bus, NT))  # Upper charging limits
-        ESS_cha_u[IndESS, :] = Max_rating[IndESS].reshape(-1, 1)  # Max charging limits
-        # Discharging limits
-        ESS_dis_l = np.zeros((N_bus, NT))  # Lower discharging limits
-        ESS_dis_u = np.zeros((N_bus, NT))  # Upper discharging limits
-        ESS_dis_u[IndESS, :] = Max_rating[IndESS].reshape(-1, 1)  # Max discharging limits
+            # Charging limits
+            ESS_cha_l = np.zeros((N_bus, NT))  # Lower charging limits
+            ESS_cha_u = np.zeros((N_bus, NT))  # Upper charging limits
+            ESS_cha_u[IndESS, :] = Max_rating[IndESS].reshape(-1, 1)  # Max charging limits
+            # Discharging limits
+            ESS_dis_l = np.zeros((N_bus, NT))  # Lower discharging limits
+            ESS_dis_u = np.zeros((N_bus, NT))  # Upper discharging limits
+            ESS_dis_u[IndESS, :] = Max_rating[IndESS].reshape(-1, 1)  # Max discharging limits
 
-        # State of Charge (SoC)
-        ESS_soc0 = np.zeros((N_bus))
-        ESS_soc_l = np.zeros((N_bus, NT))  # Lower SoC limits
-        ESS_soc_u = np.zeros((N_bus, NT))  # Upper SoC limits
-        ESS_soc_u[IndESS, :] = Max_capacity[IndESS].reshape(-1, 1)   # Max SoC limits
+            # State of Charge (SoC)
+            ESS_soc0 = np.zeros((N_bus))
+            ESS_soc_l = np.zeros((N_bus, NT))  # Lower SoC limits
+            ESS_soc_u = np.zeros((N_bus, NT))  # Upper SoC limits
+            ESS_soc_u[IndESS, :] = Max_capacity[IndESS].reshape(-1, 1)   # Max SoC limits
 
-        ESS_cha_bound = np.array([ESS_cha_l,ESS_cha_u])
-        ESS_dis_bound = np.array([ESS_dis_l,ESS_dis_u])
-        ESS_soc_bound = np.array([ESS_soc_l,ESS_soc_u])
+            ESS_cha_bound = np.array([ESS_cha_l,ESS_cha_u])
+            ESS_dis_bound = np.array([ESS_dis_l,ESS_dis_u])
+            ESS_soc_bound = np.array([ESS_soc_l,ESS_soc_u])
 
-        ###################################################################### 2nd stage SOC-ACOPF
-        # Prepare arguments for each `sc`
-        R_sample_size = int(np.ceil(NP / R_div))
-        R_sample = np.sort(np.random.choice(range(NP), size=R_sample_size, replace=False))
-        inputs = [
-            (sc, NT, baseMVA, N_bus, N_line, Yp, sending_node, receiving_node,
-            R_l, X_l, B_l, Pd, Qd, pn_bound, qn_bound, v_bound, G_n, B_n,
-            K_l, a, b, c, ESS_soc0, ESS_cha_bound, ESS_dis_bound, ESS_soc_bound, Pn_solar_bound, freq_scenario)
-            for sc in R_sample  # Loop over all scenarios `sc`
-        ]
+            ###################################################################### 2nd stage SOC-ACOPF
+            # Prepare arguments for each `sc`
+            R_sample_size = int(np.ceil(NP / R_div))
+            R_sample = np.sort(np.random.choice(range(NP), size=R_sample_size, replace=False))
+            inputs = [
+                (sc, NT, baseMVA, N_bus, N_line, Yp, sending_node, receiving_node,
+                R_l, X_l, B_l, Pd, Qd, pn_bound, qn_bound, v_bound, G_n, B_n,
+                K_l, a, b, c, ESS_soc0, ESS_cha_bound, ESS_dis_bound, ESS_soc_bound, Pn_solar_bound, freq_scenario)
+                for sc in R_sample  # Loop over all scenarios `sc`
+            ]
 
-        # solving sub-problem with parallel computation...
-        # Create a pool of workers
-        with Pool(processes = num_processes) as pool:
-            results = pool.starmap(compute_SOC_ACOPF, inputs)
+            # solving sub-problem with parallel computation...
+            # Create a pool of workers
+            with Pool(processes = num_processes) as pool:
+                results = pool.starmap(compute_SOC_ACOPF, inputs)
 
-        obj_val_dict = {}
-        lambda_val_dict = {}
-        mu_val_dict = {}
+            obj_val_dict = {}
+            lambda_val_dict = {}
+            mu_val_dict = {}
 
-        for sc, cost, lambda_aloc, mu_aloc in results:
-            if cost is not None:
-                obj_val_dict[sc] = cost
-                lambda_val_dict[sc] = -lambda_aloc
-                mu_val_dict[sc] = -mu_aloc
-            else:
-                print(f"Skipping scenario {sc} due to solver error.")
+            for sc, cost, lambda_aloc, mu_aloc in results:
+                if cost is not None:
+                    obj_val_dict[sc] = cost
+                    lambda_val_dict[sc] = -lambda_aloc
+                    mu_val_dict[sc] = -mu_aloc
+                else:
+                    print(f"Skipping scenario {sc} due to solver error.")
 
-        obj_val_tilde = np.array([obj_val_dict[sc] for sc in R_sample])
-        lambda_val_tilde = np.array([lambda_val_dict[sc] for sc in R_sample])
-        mu_val_tilde = np.array([mu_val_dict[sc] for sc in R_sample])
+            obj_val_tilde = np.array([obj_val_dict[sc] for sc in R_sample])
+            lambda_val_tilde = np.array([lambda_val_dict[sc] for sc in R_sample])
+            mu_val_tilde = np.array([mu_val_dict[sc] for sc in R_sample])
 
-        obj_2nd[:, iter], lambda_2nd[:, :, :, iter], mu_2nd[:, :, :, iter] = average_cut_full(
-            NP, N_bus, NT, R_sample, obj_val_tilde, lambda_val_tilde, mu_val_tilde
-        )
+            obj_2nd[:, iter], lambda_2nd[:, :, :, iter], mu_2nd[:, :, :, iter] = average_cut_full(
+                NP, N_bus, NT, R_sample, obj_val_tilde, lambda_val_tilde, mu_val_tilde
+            )
 
-        previous_rating[:,iter] = Max_rating
-        previous_cap[:,iter] = Max_capacity
+            previous_rating[:,iter] = Max_rating
+            previous_cap[:,iter] = Max_capacity
 
-        ################################################################### Checking Convergence 
-        upperB_save[iter] = np.sum(obj_2nd[:,iter]) + invest_save[iter] + fairness_price[iter]
-        lowerB_save[iter] = obj_MP
-        if (abs(upperB_save[iter]-lowerB_save[iter]) <= upperB_save[iter]*1e-2): convergence = 1
-        print(f"Iteration {iter}, Gap: {abs(upperB_save[iter]-lowerB_save[iter])/upperB_save[iter]:.4f}")
-        print("Upper bound :", upperB_save[iter])
-        print("Lower bound :", lowerB_save[iter])
+            ################################################################### Checking Convergence 
+            upperB_save[iter] = np.sum(obj_2nd[:,iter]) + invest_save[iter] + fairness_price[iter]
+            lowerB_save[iter] = obj_MP
+            objgap = abs(upperB_save[iter] - lowerB_save[iter]) / upperB_save[iter]
+            print(f"\tObj_LB: {lowerB_save[iter]}, Obj_UB: {upperB_save[iter]}, ObjGap: {objgap}")
 
-        # Continuing iteration
-        iter+=1
-        R_div = max(int(np.ceil(R_div / 1.5)), 1)
+            if objgap < 0.01:
+                convergence = 1
+                iter+=1
+                break
+
+            # Continuing iteration
+            iter+=1
+
+        ##############################################################
+        ################## Confidence exit checking ##################
+        confidence_level = 0.90
+        Z = norm.ppf((1 + confidence_level) / 2)  # ~1.64
+
+        W = len(R_sample)
+        W_sample = np.sort(np.random.choice(range(NP), size=W, replace=False))
+        print(f"W length is {W}")
+
+        U_tilde = (NP / W) * np.sum(obj_2nd[W_sample, iter-1]) + invest_save[iter-1] + fairness_price[iter-1]
+        s_U = np.sqrt(1 / (W - 1) * np.sum((obj_2nd[W_sample, iter-1] - np.mean(obj_2nd[W_sample, iter-1])) ** 2))
+                
+        upper_confidence_bound = U_tilde + Z * s_U / np.sqrt(W)
+        lower_confidence_bound = U_tilde - Z * s_U / np.sqrt(W)
+
+        # Calculate the confidence-adjusted bound gap
+        confidence_adjusted_bound_gap = (upper_confidence_bound - lowerB_save[iter-1]) / upper_confidence_bound
+        e_parameter = -0.0001
+
+        print(f"[Outer Loop] Checking Confidence Bound for Termination...")
+
+        # Check if termination condition is met
+        if (confidence_adjusted_bound_gap < e_parameter):
+            converged_fully = True
+            print(f"[Outer Loop] Terminate the optimization process after {iter+1} inner iterations and {iter_outer+1} outer iterations.")
+            print(f"\t Termination Conditions: \n\t\tconfidence_adjusted_bound_gap = {confidence_adjusted_bound_gap}, R_div = {R_div}")
+            print(f"\tupper_confidence_bound: {upper_confidence_bound}, objval: {lowerB_save[iter-1]}, confidence_adjusted_bound_gap = {confidence_adjusted_bound_gap}")
+        else:
+            print(f"[Outer Loop] Confidence not met, re-enter small while loop for further refinement.")
+            iter_outer += 1
+            R_div = max(int(np.ceil(R_div / 1.5)), 1)
 
     total_time = dt.datetime.now() - start_time
 
